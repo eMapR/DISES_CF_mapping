@@ -18,33 +18,33 @@ The script is set up to access an asset that has the format of that imageCollect
 
 **User defined params**
 
-label: str 
-    Label is based on the reducer that is being used for training data creation below. This could be changed
+label: str    
+    Label is based on the reducer that is being used for training data creation below. This could be changed   
 
-bands: list 
-    This was originally set up as a bivariate thing, could be changed in the future. 
+bands: list     
+    This was originally set up as a bivariate thing, could be changed in the future.    
 
-yr_band = str 
-    yr_XXXX is from the structure of the temporally fitted data (ftv or fit) and should align with the year of forest cover from GFCC or Hansen. 
+yr_band = str    
+    yr_XXXX is from the structure of the temporally fitted data (ftv or fit) and should align with the year of forest cover from GFCC or Hansen.    
 
-startYear: int 
+startYear: int   
 
-endYear: int  
+endYear: int     
 
-canopy_band: str
-    Canopy_band is dictated by the target dataset (GFCC or Hansen). It is 'treecover2000' for Hansen and 'tree_canopy_cover' for GFCC. 
+canopy_band: str   
+    Canopy_band is dictated by the target dataset (GFCC or Hansen). It is 'treecover2000' for Hansen and 'tree_canopy_cover' for GFCC.     
 
-place: ee.Geometry object
-    Use a geometry or if a featureCollection, make sure it is cast to geometry before using. 
+place: ee.Geometry object     
+    Use a geometry or if a featureCollection, make sure it is cast to geometry before using.    
 
-map_palette: ee palette object 
-    Map palette just creates a green palette for visualizing the outputs. For example: {min: 0, max: 100, palette: ['ffffff', '004000']} 
+map_palette: ee palette object     
+    Map palette just creates a green palette for visualizing the outputs. For example: {min: 0, max: 100, palette: ['ffffff', '004000']}     
 
-nbr: ee.Image() 
-    This expects an imageCollection of fitted imagery generated from the LTOP process (linked above). nbr etc comes from the fitted imagery with RMA just set up as a bivariate thing but may be expanded in the future. An additional call would look like: var ndvi = ee.Image('users/ak_glaciers/NDVI_fitted_image_stack_from_LTOP_1990_start')
+nbr: ee.Image()     
+    This expects an imageCollection of fitted imagery generated from the LTOP process (linked above). nbr etc comes from the fitted imagery with RMA just set up as a bivariate thing but may be expanded in the future. An additional call would look like: var ndvi = ee.Image('users/ak_glaciers/NDVI_fitted_image_stack_from_LTOP_1990_start')   
 
-num_points: int 
-    This is the number of random points that will be generated to use for the RMA. It is not known exactly what the 'right' number of points are here. You're trying to balance comprehensive exploration of the dataspace with computation and serial auto-correlation. 
+num_points: int    
+    This is the number of random points that will be generated to use for the RMA. It is not known exactly what the 'right' number of points are here. You're trying to balance comprehensive exploration of the dataspace with computation and serial auto-correlation.     
 
 The output of this script will be either a multiband image with each band being a year of canopy cover or a time series in ee.ImageCollection form with each image in the collection being a year of canopy cover data. Canopy cover will be expressed as a percentage (0 is no canopy cover). The script is not currently (11/2/2022) set up to decide what the output looks like by default. It is still set up so that the user needs to comment or uncomment the export statements to determine what you want to export and where it should go. 
 
