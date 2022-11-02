@@ -1,6 +1,6 @@
 ## DISES Community Forest Project
 
-This project is investigating the role of Community Forests (CFs) in livelihoods and biophysical paramaters in SE Asia with a focus on Vietnam, Cambodia and Thailand. The following documentation corresponds to Google Earth Engine (GEE) scripts that can be used to generate forest canopy cover products, summarize those products by vector-based area and perform some basic change detection processes. 
+This project is investigating the role of Community Forests (CFs) in livelihoods and biophysical paramaters in SE Asia with a focus on Vietnam, Cambodia and Thailand. The following documentation corresponds to Google Earth Engine (GEE) scripts that can be used to generate forest canopy cover products, summarize those products by vector-based area and perform some basic change detection processes. The scripts listed below are available in this Github repo or at a publicly available [GEE repo](https://code.earthengine.google.com/?accept_repo=users/ak_glaciers/DISES_CF_project). 
 
 ## Scripts: 
 
