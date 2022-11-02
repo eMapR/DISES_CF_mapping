@@ -6,6 +6,8 @@ This project is investigating the role of Community Forests (CFs) in livelihoods
 
 - generate_rma_canopy_cover.js 
 - extract_stats_from_CFs.js
+- generate_CF_counterfactuals_polys.js
+- generate_CF_counterfactuals_pixels.js
 - annual_change_detection.js 
 
 #### Generate annual canopy cover
@@ -52,16 +54,52 @@ The output of this script will be either a multiband image with each band being 
 
 This is just a simple script to generate summary statistics for specific CFs in the domain. The script is set up to generate an ee.chart and will be set up to export a csv. 
 
-**User defined params**
-cambodiaCFs: ee.FeatureCollection
+###### User defined params
+
+**cambodiaCFs: ee.FeatureCollection**
     The featureCollection of CFs. For example the cambodia asset is: ee.FeatureCollection('users/ak_glaciers/All_CF_Cambodia_July_2016'); 
 
-example_cf: ee.FeatureCollection
+**example_cf: ee.FeatureCollection**
     Filter the CF FC to get a specific CF. This could also be set to some other geometry but its generally intended to deal with CFs. For example: cambodiaCFs.filter(ee.Filter.eq('CF_Name_En','Torb Cheang'))
 
-canopy_ts = 'example'
+**canopy_ts = ee.ImageCollection**
     This is the output of the generate_stats_from_CFs and is an imageCollection of annual canopy cover %
 
 Note that the reducer defaults to ee.Reducer.mean(). This can be manually changed and/or set as a user-defined argument if more is added to this script. 
 
 The default for this script is to take the imageCollection and generate a chart of the time series change with time. 
+
+
+#### Generate CF counterfactuals using polygons
+
+To assess the impacts of community forest establishment and management practices we select some counterfactuals or analogues for each known CF. These are areas with similar geographic, biophysical and socio-economic characteristics where CFs have not been established. We use these as control cases against which to compare the CFs and associated management practices. There are multiple options and potential inputs for creating and selecting these counterfactuals but they are generally selected using a suite of predictor variables and rule-based filtering. 
+
+###### User defined params 
+
+**CFs: ee.FeatureCollection**       
+    A feature collection of CF boundaries. Process was developed using the CF boundaries for Cambodia (ee.FeatureCollection('users/ak_glaciers/All_CF_Cambodia_July_2016')).     
+
+**canopyCover: ee.Image()**    
+    An output of the canopy cover model above for a baseline year. Testing was conducted using the year 2000 as a baseline. This acts as a primary predictor variable for the counterfactual selection but will be augmented in future versions.     
+
+**plusMinus: int**     
+    When we select the thresholds for appropriate forest cover analogues this will determine how far off the CF mean we can be.    
+
+**numFeats: int**     
+    In the first version of this script it will randomly shuffle the CF boundaries in four geographic quadrants. This will produce this many feats per cardnial direction quadrant   
+
+**place: str**     
+    This will be used in naming structures and could be used to filter on a country dataset like LSIB etc.      
+
+**aoi: ee.Geometry()**      
+    Should be an ee.Geometry() or a FC cast as a geometry(). Can be set to filter with place like: ee.FeatureCollection("USDOS/LSIB/2017").filter(ee.Filter.eq('COUNTRY_NA',place)).geometry().   
+
+**moveCoeff: int**     
+    This will be multiplied by the 0-1 distributed random numbers to define how much polygons are moved inside geographic coordinates. There is no 'right' answer here but testing was conducted with a value of 5. This is determined by the size of your study area. 
+
+**baselineYr: str**     
+    A bandname for the year you are using as your baseline in the canopy cover dataset. Testing was conducted with the year 2000 like: 'yr_2000'
+
+###### Outputs
+This script will output a featureCollection of possible analogues/counterfactuals for each CF in the CF featureCollection. Note that the current (11/2/2022) implementation is basic and only uses canopy cover as a predictor. As soon as additional data are available more variables could be added. This just depends on the format of those data. 
+
