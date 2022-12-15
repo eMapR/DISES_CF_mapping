@@ -152,12 +152,30 @@ analogue_polys = ee.FeatureCollection(analogue_polys)
 print(analogue_polys)
 Map.addLayer(analogue_polys,{},'aslghasjlfgh')
 //////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////prep data for export /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //remove polygons that overlap other CFs
 var filterInside = ee.Filter.bounds(CFs);
 var filterNot = filterInside.not();
 analogue_polys = analogue_polys.filter(filterNot); 
+
+//add the actual predictor variable values back into the features as properties so we can see and plot them 
+analogue_polys = analogue_polys.map(function(feat){
+  var cc_out = get_aoi_stat(canopyCover.select(baselineYr),feat,baselineYr,'canopyCover',ee.Reducer.mean()); 
+  //this could be amended to be distance from CF centroid to road 
+  var rd_out = get_aoi_stat(road_dist,feat,'distance','dist_to_rd',ee.Reducer.mean()); 
+  var edge_out = get_aoi_stat(dist_to_edge,feat,'distance','dist_to_edge',ee.Reducer.mean());
+  var slope_out = get_aoi_stat(slope,feat,'slope','slope',ee.Reducer.mean()); 
+  var aspect_out = get_aoi_stat(aspect,feat,'aspect','aspect',ee.Reducer.mean());   
+  var density_out = get_aoi_stat(pop_dens,feat,'density','density',ee.Reducer.mean()); 
+  return feat.set('canopyCover',cc_out)
+             .set('dist_to_rd',rd_out)
+             .set('dist_to_edge',edge_out)
+             .set('slope',slope_out)
+             .set('aspect',aspect_out)
+             .set('density',density_out)
+             .set('source_CF',polygons.first().get('CF_Name_En')); //this will have to be changed to run all CFs
+}); 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,8 +183,16 @@ analogue_polys = analogue_polys.filter(filterNot);
 //export the result 
 Export.table.toAsset({
   collection:analogue_polys, 
-  description:'CF_polys_from_rasters_filtered', 
-  assetId:'general_exports'+'/CF_polys_from_rasters_filtered'
+  description:'CF_polys_from_rasters_filtered_w_props', 
+  assetId:'general_exports'+'/CF_polys_from_rasters_filtered_w_props'
+}); 
+
+Export.table.toDrive({
+  collection: analogue_polys,
+  description:'CF_polys_from_rasters_filtered_w_props', 
+  fileNamePrefix:'CF_polys_from_rasters_filtered_w_props',
+  folder: 'DISES_counterfactuals',
+  fileFormat:'CSV'
 }); 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

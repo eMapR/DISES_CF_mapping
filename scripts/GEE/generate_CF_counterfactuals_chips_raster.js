@@ -9,6 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //define some user params 
 var CFs = ee.FeatureCollection('users/ak_glaciers/All_CF_Cambodia_July_2016'); 
+var numChips = 1000; //number of image chips in a CF boundary 
 var place = 'Cambodia'; 
 var aoi = ee.FeatureCollection("USDOS/LSIB/2017").filter(ee.Filter.eq('COUNTRY_NA',place)).geometry();
 var baselineYr = 'yr_2000'; //for the canopy cover mostly 
@@ -124,20 +125,47 @@ var masked_chips = img_chips.map(function(feat){
   return vect_chips;
 }); 
 
-masked_chips = ee.FeatureCollection(masked_chips.flatten())
+masked_chips = ee.FeatureCollection(masked_chips.flatten()); 
 
 //remove chips that overlap other CFs
 var filterInside = ee.Filter.bounds(CFs);
 var filterNot = filterInside.not();
 masked_chips = masked_chips.filter(filterNot); 
-// print(masked_chips)
-// Map.addLayer(eemasked_chips.first(),{},'asklgh')
-// Map.addLayer(masked_chips,{},'vect chips')
+
+//add the actual predictor variable values back into the features as properties so we can see and plot them 
+masked_chips = masked_chips.map(function(feat){
+  var cc_out = get_aoi_stat(canopyCover.select(baselineYr),feat,baselineYr,'canopyCover',ee.Reducer.mean()); 
+  //this could be amended to be distance from CF centroid to road 
+  var rd_out = get_aoi_stat(road_dist,feat,'distance','dist_to_rd',ee.Reducer.mean()); 
+  var edge_out = get_aoi_stat(dist_to_edge,feat,'distance','dist_to_edge',ee.Reducer.mean());
+  var slope_out = get_aoi_stat(slope,feat,'slope','slope',ee.Reducer.mean()); 
+  var aspect_out = get_aoi_stat(aspect,feat,'aspect','aspect',ee.Reducer.mean());   
+  var density_out = get_aoi_stat(pop_dens,feat,'density','density',ee.Reducer.mean()); 
+  return feat.set('canopyCover',cc_out)
+             .set('dist_to_rd',rd_out)
+             .set('dist_to_edge',edge_out)
+             .set('slope',slope_out)
+             .set('aspect',aspect_out)
+             .set('density',density_out)
+             .set('source_CF',CF_example.first().get('CF_Name_En')); //this will have to be changed to run all CFs
+}); 
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 Export.table.toAsset({
   collection:masked_chips,
-  description:'image_chip_counterfactual_testing_rasters_all_masks',
-  assetId:'general_exports'+'/image_chip_counterfactual_testing_rasters_all_masks'
+  description:'image_chip_counterfactual_testing_rasters_all_masks_w_props',
+  assetId:'general_exports'+'/image_chip_counterfactual_testing_rasters_all_masks_w_props'
+}); 
+
+Export.table.toDrive({
+  collection: masked_chips,
+  description:'CF_image_chips_from_rasters_filtered_w_props', 
+  fileNamePrefix:'CF_image_chips_from_rasters_filtered_w_props',
+  folder: 'DISES_counterfactuals',
+  fileFormat:'CSV'
 }); 
 
 ////////////////////////////////////////////////////////////////////////////////

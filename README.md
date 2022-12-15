@@ -166,10 +166,12 @@ This is set up very similarly to the previous version based on creating an exces
     2. increase the pct arg in the user defined args - that will allow for chips that are further from the base chip (i.e. this defines the plus or minus that is allowed for predictor variable values)
     3. Reduce the spatial resolution - reducing the spatial resolution creates more pixels and thus more chips and potential counterfactuals. There is a limit to doing this as eventually you are just working on a pixel scale (i.e. when the resolution arg is set to the same spatial resolution of the input predictor variable)
 - The output is set up so that it will create a featureCollection with all the possible counterfactual chips for all the original counterfactual chips in a CF boundary so the featureCollection will be the number of image chips you used from the base CF times whatever number were left for each after masking. This could be adjusted depending on how its going to be used and what would be most helpful. 
+- Decide what should be done with the distance metrics in terms of reducer. Currently, this is just set to mean as well as the other ones but could (and probably should) be set to distance from centroid or something along those lines. 
+-convert to run for more than one CF - this can easily be done by taking the masking logic and just mapping all of that over a full featureCollection of CF boundaries
+- Need to add more metadata, specifically about the status of protected areas and other commercial land concessions
 
 #### Generate CF counterfactuals using image polygons (raster version)
 This works in a very similar fashion to the CF counterfactuals for image chips from rasters described above. The same raster creation and masking steps are used to create a series of pixels that are the selected CF counterfactuals. We use the full CF boundary to calculate predictor variable values (e.g. mean population density) instead of individual image chips inside the CF boundary. The main difference is that instead of converting the pixels that make it through the multiple masks to vector and finishing there, we just take the centroid of those image chips and use that to define a new polygon boundary. These polygons have the same shape and orientation as the original polygon. 
-- Need to add more metadata, specifically about the status of protected areas and other commercial land concessions
 
 ###### Problems/things to resolve
 The major issues with this approach are very similar to those described above for image chips because the process is fairly similar. However, this has the extra added issue of having less possibilities to choose from because the targets are generally bigger and there is only one base CF instead of x number of chips for each CF. The issues with masking etc. are the same though. 
@@ -183,3 +185,5 @@ The major issues with this approach are very similar to those described above fo
 - The output is set up so that it will create a featureCollection with all the possible counterfactual chips for all the original counterfactual chips in a CF boundary so the featureCollection will be the number of image chips you used from the base CF times whatever number were left for each after masking. This could be adjusted depending on how its going to be used and what would be most helpful. 
 - These are allowed to overlap each other (not other CFs) which should probably be changed
 - Need to add more metadata, specifically about the status of protected areas and other commercial land concessions
+- Decide what should be done with the distance metrics in terms of reducer. Currently, this is just set to mean as well as the other ones but could (and probably should) be set to distance from centroid or something along those lines. 
+- Convert to run for more than one CF - this can easily be done by taking the masking logic and just mapping all of that over a full featureCollection of CF boundaries
