@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //define some user params 
 var CFs = ee.FeatureCollection('users/ak_glaciers/All_CF_Cambodia_July_2016'); 
-var numChips = 1000; //number of image chips in a CF boundary 
 var place = 'Cambodia'; 
 var aoi = ee.FeatureCollection("USDOS/LSIB/2017").filter(ee.Filter.eq('COUNTRY_NA',place)).geometry();
 var baselineYr = 'yr_2000'; //for the canopy cover mostly 

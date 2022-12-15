@@ -10,10 +10,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //import some existing data 
 var CFs = ee.FeatureCollection('users/ak_glaciers/All_CF_Cambodia_July_2016'); 
-var numFeats = 10000; //this will produce this many feats per cardnial direction quadrant
 var place = 'Cambodia'; 
 var aoi = ee.FeatureCollection("USDOS/LSIB/2017").filter(ee.Filter.eq('COUNTRY_NA',place)).geometry(); 
-var moveCoeff = 1; //this will be multiplied by the 0-1 distributed random numbers to define how much polygons are moved
 var baselineYr = 'yr_2000'; 
 var canopyCover_thresh = 15; 
 var resolution = 1000; 
@@ -75,7 +73,7 @@ polygons = polygons.map(function(feat){
              .set('slope',slope_out)
              .set('aspect',aspect_out)
              .set('density',density_out)
-             .set('source_CF',polygons.first().get('CF_Name_En')); //this will have to be changed to run all CFs
+             .set('source_CF',feat.get('CF_Name_En')); //this will have to be changed to run all CFs
 }); 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +172,7 @@ analogue_polys = analogue_polys.map(function(feat){
              .set('slope',slope_out)
              .set('aspect',aspect_out)
              .set('density',density_out)
-             .set('source_CF',polygons.first().get('CF_Name_En')); //this will have to be changed to run all CFs
+             .set('source_CF',feat.get('CF_Name_En')); //this will have to be changed to run all CFs
 }); 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
