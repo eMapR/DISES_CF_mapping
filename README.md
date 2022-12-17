@@ -10,9 +10,9 @@ The final option would be to select a random subset of pixels from within the CF
 
 ## Scripts: 
 
-- generate_CF_counterfactuals_polys_raster.js
-- generate_CF_counterfactuals_chips_raster.js
-- generate_CF_counterfactuals_pixels.js [NEEDS UPDATING]
+- generate_CF_counterfactuals_polys_single_CF.js
+- generate_CF_counterfactuals_chips_single_CF.js
+- generate_CF_counterfactuals_chips_multiple_CFs.js
 - generate_rma_canopy_cover.js 
 - extract_stats_from_CFs.js
 - annual_change_detection.js 
@@ -115,7 +115,7 @@ This is set up very similarly to the previous version based on creating an exces
 This script will output a featureCollection of possible analogues/counterfactuals. It is set to just create this for one test CF but can be amended to map over the full FC (details below). The featureCollection will include all image chips but chips will have a property called source_CF that includes the English name of the origin CF and a unique id that comes from the original image chip. 
 
 ###### Problems/things to resolve
-- The code as of 12/15/22, like for polygons, is not set up to map over all the CFs in the full featureCollection. To do this, one would create image chips for all CFs like in line 45, not just for the CF_example. You would then calculate statistics for all of the image chips in all of the CFs i.e. map the function on line 50 over the full featureCollection of CFs, not just the image chips. Similarly, the masking step (defined on line 76) needs to be mapped across all CFs, not just the test one. This is called on line 127. Finally, you would want to map the function defined on line 135 across the full CF featureCollection so that all image chips in all the CFs have summary stats. 
+- The code as of 12/15/22, like for polygons, is not set up to map over all the CFs in the full featureCollection. The generate_CF_counterfactuals_chips_single_CF.js code will do this but it is not totally done or fully tested. This gives an idea of how you would go about doing this and works or is close to working but should be double checked!!! To do this, one would create image chips for all CFs like in line 45, not just for the CF_example. You would then calculate statistics for all of the image chips in all of the CFs i.e. map the function on line 50 over the full featureCollection of CFs, not just the image chips. Similarly, the masking step (defined on line 76) needs to be mapped across all CFs, not just the test one. This is called on line 127. Finally, you would want to map the function defined on line 135 across the full CF featureCollection so that all image chips in all the CFs have summary stats. 
 
 - Exporting starts on line 156 and is not fully automated in terms of naming so you need to change this for different runs. 
 
